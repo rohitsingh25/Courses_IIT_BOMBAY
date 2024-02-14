@@ -1,2 +1,2 @@
-# SEM-_IIT_BOMBAY
+# SEM_1_IIT_BOMBAY
 Course Content of Sem 1
