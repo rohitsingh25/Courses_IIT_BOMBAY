@@ -1,0 +1,79 @@
+#include <iostream>
+#include <limits.h>
+#include <queue>
+#include <string.h>
+using namespace std;
+#define V 7
+bool bfs(int rGraph[V][V], int s, int t, int parent[])
+{
+	bool visited[V];
+	memset(visited, 0, sizeof(visited));
+	queue<int> q;
+	q.push(s);
+	visited[s] = true;
+	parent[s] = -1;
+	while (!q.empty()) 
+	{
+		int u = q.front();
+		q.pop();
+		for (int v = 0; v < V; v++) 
+		{
+			if (visited[v] == false && rGraph[u][v] > 0) 
+			{
+				if (v == t) 
+				{
+					parent[v] = u;
+					return true;
+				}
+				q.push(v);
+				parent[v] = u;
+				visited[v] = true;
+			}
+		}
+	}
+	return false;
+}
+void printG(int g[V][V])
+{
+    for(int i=0 ; i<V ; i++)
+    {
+        for(int j=0 ;j<V ; j++)
+            cout<<g[i][j]<<"  ";
+        cout<<endl;
+    }
+}
+int fordFulkerson(int Graph[V][V], int s, int t)
+{
+	int u, v;
+	int parent[V]; 
+	int max_flow = 0; 
+	while (bfs(Graph, s, t, parent)) 
+	{
+		int path_flow = INT_MAX;
+		for (v = t; v != s; v = parent[v]) 
+		{
+			u = parent[v];
+			path_flow = min(path_flow, Graph[u][v]);
+		}
+    	for (v = t; v != s; v = parent[v]) 
+    	{
+			u = parent[v];
+			Graph[u][v] -= path_flow;
+			Graph[v][u] += path_flow;
+		}
+    	max_flow += path_flow;
+    	cout<<max_flow<<endl;
+    	printG(Graph);
+	}
+    return max_flow;
+}
+int main()
+{
+	int graph[V][V];
+    for(int i=0 ; i<V; i++)
+        for(int j=0;j<V;j++)
+            cin>>graph[i][j];
+	cout << fordFulkerson(graph, 0, 6);
+	return 0;
+}
+

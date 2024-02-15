@@ -1,0 +1,47 @@
+version: '3'
+volumes:
+  psql-data:
+
+services:
+  php-app:
+    build: ./app
+    image: myapp
+    container_name: php-app
+    env_file:
+      - ./env
+    depends_on:
+      - postgres
+    ports:
+      - 80:80
+    volumes:
+      - ./app/src:/var/www/html
+    networks:
+      app-env:
+
+  postgres:
+    image: postgres:9.6
+    container_name: postgres 
+    env_file:
+      - ./env
+    volumes:
+      - ./script/:/docker-entrypoint-initdb.d
+      - psql-data:/var/lib/postgresql/data
+    networks:
+      app-env:
+      interface:
+  
+  pgadmin:
+    image: fenglc/pgadmin4
+    container_name: pgadmin
+    env_file:
+      - ./env
+    depends_on:
+      - postgres
+    ports:
+      - 5050:5050
+    networks:
+      interface:
+    
+networks:
+  app-env:
+  interface:
